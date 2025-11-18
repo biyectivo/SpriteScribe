@@ -10,6 +10,15 @@ show_debug_message($"[SpriteScribe] Welcome to SpriteScribe {SPRITESCRIBE_VERSIO
 
 global.spritescribe_draw_cache = {};
 
+///@function		sprite_to_ascii(_sprite, _image, _xscale, _yscale, _angle, _color, _alpha)
+///@description		preprocesses a sprite/frame number for later rendering with one of the draw_sprite_ascii_* or draw_self_ascii_* functions. This will determine which character, color and alpha should be use for rendering as AScII art, for each pixel of the sprite
+///@param			{Asset.GMSprite}	_sprite				A sprite resource to process
+///@param			{Real}				_image				A frame number to process
+///@param			{Real}				_xscale				The xscale to process the sprite with - useful for scaling down big sprites
+///@param			{Real}				_yscale				The yscale to process the sprite with - useful for scaling down big sprites
+///@param			{Real}				_angle				The angle to process the sprite with
+///@param			{Asset.Color}		_color				The blend color to process the sprite with
+///@param			{Real}				_alpha				The alpha value to process the sprite with
 function sprite_to_ascii(_sprite, _image, _xscale, _yscale, _angle, _color, _alpha) {
 	var _time = current_time;
 	
@@ -72,11 +81,19 @@ function sprite_to_ascii(_sprite, _image, _xscale, _yscale, _angle, _color, _alp
 }
 
 ///@function		draw_sprite_ascii_ext(_sprite, _image, _x, _y, _font_scale_h, _font_scale_v, _angle, _color, _alpha, [_font_h_spacing], [_font_v_spacing])
-///@description		draws a sprite in ASCII art using the currently set font
-///@return			{type}		|description|
+///@description		draws a sprite/frame number, in ASCII art, using the currently set font, which has been previously processed with sprite_to_ascii. Allows specifying angle, color and alpha.
+///@param			{Asset.GMSprite}	_sprite				A sprite resource to render as ASCII art. The sprite-image combination must have been preprocessed using sprite_to_ascii
+///@param			{Real}				_image				A frame number to render as ASCII art.  The sprite-image combination must have been preprocessed using sprite_to_ascii
+///@param			{Real}				_x					The x position of the ASCII art, relative to the original sprite's anchor point
+///@param			{Real}				_y					The y position of the ASCII art, relative to the original sprite's anchor point
+///@param			{Real}				_font_scale_h		The horizontal scale to draw the characters with
+///@param			{Real}				_font_scale_v		The vertical scale  to draw the characters with
+///@param			{Real}				_angle				The angle to draw the ASCII art, relative to the original sprite's anchor point
+///@param			{Constant.Color}	_color				The blend color to use when rendering the ASCII art
+///@param			{Real}				_alpha				The alpha value to use when rendering the ASCII art
+///@param			{Real}				[_font_h_spacing]	The horizontal spacing of the characters in the ASCII art (0 by default)
+///@param			{Real}				[_font_v_spacing]	The vertical spacing of the characters in the ASCII art (0 by default)
 function draw_sprite_ascii_ext(_sprite, _image, _x, _y, _font_scale_h, _font_scale_v, _angle, _color, _alpha, _font_h_spacing=0, _font_v_spacing=0) {
-	live_auto_call;
-	
 	var _key = string($"{sprite_get_name(_sprite)}|{floor(_image)}");
 	if (!variable_struct_exists(global.spritescribe_draw_cache, _key)) {
 		throw(string($"[SpriteScribe] ERROR: sprite {sprite_get_name(_sprite)} image {floor(_image)} is not preprocessed. Process it first with sprite_to_ascii."));
@@ -133,25 +150,55 @@ function draw_sprite_ascii_ext(_sprite, _image, _x, _y, _font_scale_h, _font_sca
 	}
 }
 
-function draw_sprite_ascii(_sprite, _image, _x, _y, _font_scale_h=SPRITESCRIBE_DEFAULT_FONT_H_SCALE, _font_scale_v=SPRITESCRIBE_DEFAULT_FONT_V_SCALE, _font_h_spacing=0, _font_v_spacing=0, _force_redraw=false) {
-	draw_sprite_ascii_ext(_sprite, _image, _x, _y, 1, 1, 0, c_white, 1,  _font_scale_h, _font_scale_v, _font_h_spacing, _font_v_spacing,  _force_redraw);
+///@function		draw_sprite_ascii(_sprite, _image, _x, _y, _font_scale_h, _font_scale_v, [_font_h_spacing], [_font_v_spacing])
+///@description		draws a sprite/frame number, in ASCII art, using the currently set font, which has been previously processed with sprite_to_ascii.
+///@param			{Asset.GMSprite}	_sprite				A sprite resource to render as ASCII art. The sprite-image combination must have been preprocessed using sprite_to_ascii
+///@param			{Real}				_image				A frame number to render as ASCII art.  The sprite-image combination must have been preprocessed using sprite_to_ascii
+///@param			{Real}				_x					The x position of the ASCII art, relative to the original sprite's anchor point
+///@param			{Real}				_y					The y position of the ASCII art, relative to the original sprite's anchor point
+///@param			{Real}				[_font_scale_h]		The horizontal scale to draw the characters with. By default, SPRITESCRIBE_DEFAULT_FONT_H_SCALE
+///@param			{Real}				[_font_scale_v]		The vertical scale  to draw the characters with. By default, SPRITESCRIBE_DEFAULT_FONT_V_SCALE
+///@param			{Real}				[_font_h_spacing]	The horizontal spacing of the characters in the ASCII art (0 by default)
+///@param			{Real}				[_font_v_spacing]	The vertical spacing of the characters in the ASCII art (0 by default)
+function draw_sprite_ascii(_sprite, _image, _x, _y, _font_scale_h=SPRITESCRIBE_DEFAULT_FONT_H_SCALE, _font_scale_v=SPRITESCRIBE_DEFAULT_FONT_V_SCALE, _font_h_spacing=0, _font_v_spacing=0) {
+	draw_sprite_ascii_ext(_sprite, _image, _x, _y, 1, 1, 0, c_white, 1,  _font_scale_h, _font_scale_v, _font_h_spacing, _font_v_spacing);
 }
 
-function draw_self_ascii_ext(_xscale, _yscale, _font_scale_h=SPRITESCRIBE_DEFAULT_FONT_H_SCALE, _font_scale_v=SPRITESCRIBE_DEFAULT_FONT_V_SCALE,_font_h_spacing=0, _font_v_spacing=0, _force_redraw=false) {
-	draw_sprite_ascii_ext(self.sprite_index, self.image_index, self.x, self.y, _xscale, _yscale, self.image_angle, self.image_blend, self.image_alpha, _font_scale_h, _font_scale_v, _font_h_spacing, _font_v_spacing, _force_redraw);
+///@function		draw_self_ascii([_font_scale_h], [_font_scale_v], [_font_h_spacing], [_font_v_spacing])
+///@description		draws the current object's sprite/frame number defined by its sprite_index and image_index, in ASCII art, using the currently set font, which has been previously processed with sprite_to_ascii.
+///@param			{Real}				[_font_scale_h]		The horizontal scale to draw the characters with.
+///@param			{Real}				[_font_scale_v]		The vertical scale  to draw the characters with.
+///@param			{Real}				[_font_h_spacing]	The horizontal spacing of the characters in the ASCII art (0 by default)
+///@param			{Real}				[_font_v_spacing]	The vertical spacing of the characters in the ASCII art (0 by default)
+function draw_self_ascii(_font_scale_h=SPRITESCRIBE_DEFAULT_FONT_H_SCALE, _font_scale_v=SPRITESCRIBE_DEFAULT_FONT_V_SCALE,_font_h_spacing=0, _font_v_spacing=0) {
+	draw_sprite_ascii_ext(self.sprite_index, self.image_index, self.x, self.y, _font_scale_h, _font_scale_v, self.image_angle, self.image_blend, self.image_alpha, _font_h_spacing, _font_v_spacing);
 }
 
-function draw_self_ascii(_font_scale_h=SPRITESCRIBE_DEFAULT_FONT_H_SCALE, _font_scale_v=SPRITESCRIBE_DEFAULT_FONT_V_SCALE, _font_h_spacing=0, _font_v_spacing=0, _force_redraw=false) {
-	draw_sprite_ascii_ext(self.sprite_index, self.image_index, self.x, self.y, self.image_xscale, self.image_yscale, self.image_angle, self.image_blend, self.image_alpha, _font_scale_h, _font_scale_v, _font_h_spacing, _font_v_spacing, _force_redraw);
-}
-
+///@function		preprocess_sprites_to_ascii(_sprite_array, [_xscale], [_yscale], [_angle], [_color], [_alpha])
+///@description		preprocesses all frames of all sprites in the _sprite_array array, using sprite_to_ascii
+///@param			{Array<Asset.GMSprite>}		_sprite_array		The array of sprites to process
+///@param			{Real}						[_xscale]			The xscale to process the sprites with, by default 1
+///@param			{Real}						[_yscale]			The yscale to process the sprites with, by default 1
+///@param			{Real}						[_angle]			The angle to process the sprites with, by default 0
+///@param			{Constant.Color}			[_color]			The blend color to use for processing all sprites/frames with. By default, c_white
+///@param			{Real}						[_alpha]			The alpha to use for processing all sprites/frames with. By default, 1
 function preprocess_sprites_to_ascii(_sprite_array, _xscale = 1, _yscale = 1, _angle = 0, _color=c_white, _alpha=1) {
 	array_foreach(_sprite_array, method({_xscale, _yscale, _angle, _color, _alpha}, function(_sprite) {
-		var _n = sprite_get_number(_sprite);
-		for (var _i=0; _i<_n; _i++)		sprite_to_ascii(_sprite, _i, _xscale, _yscale, _angle, _color, _alpha);		
+		if (sprite_exists(_sprite)) {
+			var _n = sprite_get_number(_sprite);
+			for (var _i=0; _i<_n; _i++)	sprite_to_ascii(_sprite, _i, _xscale, _yscale, _angle, _color, _alpha);		
+		}
 	}));
 }
 
+///@function		preprocess_sprites_to_ascii_by_tags(_tag_array, [_xscale], [_yscale], [_angle], [_color], [_alpha])
+///@description		preprocesses all frames of all sprites that have one of the tags in the _tag_array, using sprite_to_ascii
+///@param			{Array<String>}				_tag_array			The array of tags that will be selected for sprites to be processed
+///@param			{Real}						[_xscale]			The xscale to process the sprites with, by default 1
+///@param			{Real}						[_yscale]			The yscale to process the sprites with, by default 1
+///@param			{Real}						[_angle]			The angle to process the sprites with, by default 0
+///@param			{Constant.Color}			[_color]			The blend color to use for processing all sprites/frames with. By default, c_white
+///@param			{Real}						[_alpha]			The alpha to use for processing all sprites/frames with. By default, 1
 function preprocess_sprites_to_ascii_by_tags(_tag_array, _xscale = 1, _yscale = 1, _angle = 0, _color=c_white, _alpha=1) {
 	var _sprite_array = [];
 	for (var _i=0, _n=array_length(_tag_array); _i<_n; _i++)	_sprite_array = array_concat(_sprite_array, tag_get_asset_ids(_tag_array[_i], asset_sprite));

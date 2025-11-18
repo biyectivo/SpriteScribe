@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"scr_SpriteScribe",
   "parent":{
-    "name":"Image to ASCII",
-    "path":"folders/Image to ASCII.yy",
+    "name":"SpriteScribe",
+    "path":"folders/SpriteScribe.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",
