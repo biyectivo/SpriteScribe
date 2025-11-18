@@ -2,11 +2,13 @@
 
 DISCLAIMER: This is more of an experiment than a library. It is experimental, incomplete, non-optimized and just plain dumb. Also it will probably not be updated. Use only for fun :D
 
-SpriteScribe is a tiny set of functions to render a sprite with colored, rotated and scaled ASCII characters from your font of choice.
+**SpriteScribe** is a tiny set of functions to render a sprite with colored, rotated and scaled ASCII characters from your font of choice.
 
-## How to install
+## Requirements & How to install
 
-Include both scripts in your project.
+This script should work with most modern versions of Gamemaker LTS or above.
+
+You should download and import the YYMPS (or manually import both scripts) into your project. You can use the Releases tab for this as well.
 
 ## How to use
 
@@ -14,11 +16,11 @@ You need to process a sprite before rendering it. You can either do this on dema
 
 ## How to view a demo
 
-You can head [here](https://manta-ray.itch.io/) to view a demo. I recommend you check out the Windows version of the demo, since the WASM-based HTML version performs worse.
+You can head [here](https://manta-ray.itch.io/spritescribe) to view a demo. I recommend you check out the Windows version of the demo, since the WASM-based HTML version performs worse.
 
 ## How it works
 
-SpriteScribe works by first processing a sprite to extract the color data per pixel and then create a matrix of appropriate characters for each position (the appropriate character is chosen based on pixel luminance). This is then stored into a cache. After this is done, SpriteScribe renders the sprite by drawing the text characters per each pixel using the selected font and some additional data.
+**SpriteScribe** works by first **processing a sprite** to extract the color data per pixel and then create a matrix of appropriate characters for each position (the appropriate character is chosen based on pixel luminance). This is then stored into a cache. After this is done, **SpriteScribe** then **renders the sprite to ASCII** by drawing the text characters per each pixel using the selected font and some additional data.
 
 ### Step 1: Processing the sprite
 
@@ -59,10 +61,27 @@ Here:
 * `_alpha` - The alpha to use for rendering the ASCII art
 * `_font_h_spacing` and `_font_v_spacing` - The space between characters. By default, this is 0, but you can select a negative number (to overlap characters) or positive number (to space out characters)
 
+## Configuration
+
+**SpriteScribe** includes the following macro variables:
+
+* `SPRITESCRIBE_DEFAULT_FONT_H_SCALE` - This is the default scale for rendering a character. It is set by default to `1/string_width("#")` so that 1 px equates 1 character, but it is obviously too small to see the font
+* `SPRITESCRIBE_DEFAULT_FONT_V_SCALE` - This is the default scale for rendering a character. It is set by default to `1/string_height("#")` so that 1 px equates 1 character, but it is obviously too small to see the font
+* `SPRITESCRIBE_LUMINANCE_GAMMA_CORRECTION`	- Whether to use gamma correction for luminance determination. By default true
+* `SPRITESCRIBE_CHARS` - The set of characters (as an array of strings) that will be use for rendering. The actual character used per pixel will depend on luminance. The array should be sorted from biggest luminance to lowest luminance. The default array is:
+
+`["@","#","W","$","9","8","7","6","5","4","3","2","1","0","?","!","a","b","c",";",":","+","=","-",",",".","_"," "]`
+
+but you are welcome to experiment with others!
+
+* `SPRITESCRIBE_DEBUG_SURFACES`	- If set to true, each time you process a sprite using `sprite_to_ascii` it will savae a sprite with the surface to disk. Defaults to false
+
 ## Performance
 
-Not very good, and not rigorously measured, but you can make your own experiments... For a fun experiment or jam game I think it's ok.
+ot very good, and not rigorously measured, but you can make your own experiments... For a fun test or jam game I think it's ok. For me, the Windows demo project runs at ~48fps when rendered with ASCII (including clouds) and ~60fps (without clouds).
 
 ## Credits
 
-The library uses YellowAfterlife's `buffer_getpixel_*` functions available [here](https://github.com/YAL-GameMaker/buffer_getpixel) to drastically speed up getting the color/alpha of each pixel in the sprite when processing it.
+The library uses YellowAfterlife's `buffer_getpixel_*` functions available [here](https://github.com/YAL-GameMaker/buffer_getpixel) to **drastically speed up** getting the color/alpha of each pixel in the sprite when processing it.
+
+The fantastic animated dragon sprite can be found [here](https://free-game-assets.itch.io/dragon-pixel-art-character-sprite-sheets-pack). The cloud sprites were taken from [this link](https://ohnoponogames.itch.io/retro-cloud-tileset).
