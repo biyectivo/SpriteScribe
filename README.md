@@ -4,9 +4,11 @@ DISCLAIMER: This is more of an experiment than a library. It is experimental, in
 
 SpriteScribe is a tiny set of functions to render a sprite with colored, rotated and scaled ASCII characters from your font of choice.
 
-## How to install
+## Requirements & How to install
 
-Include both scripts in your project.
+This script should work with most modern versions of Gamemaker LTS or above.
+
+You should download and import the YYMPS (or manually import both scripts) into your project.
 
 ## How to use
 
@@ -14,7 +16,7 @@ You need to process a sprite before rendering it. You can either do this on dema
 
 ## How to view a demo
 
-You can head [here](https://manta-ray.itch.io/) to view a demo. I recommend you check out the Windows version of the demo, since the WASM-based HTML version performs worse.
+You can head [here](https://manta-ray.itch.io/spritescribe) to view a demo. I recommend you check out the Windows version of the demo, since the WASM-based HTML version performs worse.
 
 ## How it works
 
@@ -66,3 +68,5 @@ Not very good, and not rigorously measured, but you can make your own experiment
 ## Credits
 
 The library uses YellowAfterlife's `buffer_getpixel_*` functions available [here](https://github.com/YAL-GameMaker/buffer_getpixel) to drastically speed up getting the color/alpha of each pixel in the sprite when processing it.
+
+The fantastic animated dragon sprite can be found [here](https://free-game-assets.itch.io/dragon-pixel-art-character-sprite-sheets-pack)
